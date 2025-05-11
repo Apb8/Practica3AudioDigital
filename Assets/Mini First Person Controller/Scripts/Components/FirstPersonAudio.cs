@@ -128,8 +128,7 @@ public class FirstPersonAudio : MonoBehaviour
         switch (surface)
         {
             case "Grass": selectedClips = grassSteps; break;
-            case "Ground" +
-            "": selectedClips = groundSteps; break;
+            case "Ground": selectedClips = groundSteps; break;
             case "Wood": selectedClips = woodSteps; break;
         }
 
