@@ -15,6 +15,11 @@ public class FirstPersonAudio : MonoBehaviour
     Vector2 lastCharacterPosition;
     Vector2 CurrentCharacterPosition => new Vector2(character.transform.position.x, character.transform.position.z);
 
+    [Header("Footstep Clips By Surface")]
+    public AudioClip[] grassSteps;
+    public AudioClip[] groundSteps;
+    public AudioClip[] woodSteps;
+
     [Header("Landing")]
     public AudioSource landingAudio;
     public AudioClip[] landingSFX;
@@ -97,17 +102,57 @@ public class FirstPersonAudio : MonoBehaviour
     /// <param name="audioToPlay">Audio that should be playing.</param>
     void SetPlayingMovingAudio(AudioSource audioToPlay)
     {
-        // Pause all MovingAudios.
-        foreach (var audio in MovingAudios.Where(audio => audio != audioToPlay && audio != null))
+        //// Pause all MovingAudios.
+        //foreach (var audio in MovingAudios.Where(audio => audio != audioToPlay && audio != null))
+        //{
+        //    audio.Pause();
+        //}
+
+        //// Play audioToPlay if it was not playing.
+        //if (audioToPlay && !audioToPlay.isPlaying)
+        //{
+        //    audioToPlay.Play();
+        //}
+
+        // Pause todos los audios de movimiento excepto el que queremos usar.
+    foreach (var audio in MovingAudios.Where(audio => audio != audioToPlay && audio != null))
+    {
+        audio.Pause();
+    }
+
+    if (audioToPlay == stepAudio && groundCheck.isGrounded)
+    {
+        string surface = DetectSurfaceTag();
+        AudioClip[] selectedClips = null;
+
+        switch (surface)
         {
-            audio.Pause();
+            case "Grass": selectedClips = grassSteps; break;
+            case "Ground" +
+            "": selectedClips = groundSteps; break;
+            case "Wood": selectedClips = woodSteps; break;
         }
 
-        // Play audioToPlay if it was not playing.
-        if (audioToPlay && !audioToPlay.isPlaying)
+        if (selectedClips != null && selectedClips.Length > 0)
         {
-            audioToPlay.Play();
+            stepAudio.clip = selectedClips[Random.Range(0, selectedClips.Length)];
         }
+    }
+
+    if (audioToPlay && !audioToPlay.isPlaying)
+    {
+        audioToPlay.Play();
+    }
+    }
+
+    private string DetectSurfaceTag()
+    {
+        Ray ray = new Ray(transform.position, Vector3.down);
+        if (Physics.Raycast(ray, out RaycastHit hit, 2f))
+        {
+            return hit.collider.tag;
+        }
+        return "Default";
     }
 
     #region Play instant-related audios.
