@@ -901,7 +901,7 @@ GameObject:
   - component: {fileID: 6397291155531275061}
   - component: {fileID: 6397291155531275060}
   - component: {fileID: -2807618930437342872}
-  - component: {fileID: 6821285516049843227}
+  - component: {fileID: 1099095030324140357}
   m_Layer: 0
   m_Name: Kitty_001
   m_TagString: Untagged
@@ -1113,7 +1113,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6821285516049843227
+--- !u!114 &1099095030324140357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
