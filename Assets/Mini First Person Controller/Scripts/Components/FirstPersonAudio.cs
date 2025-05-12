@@ -58,8 +58,8 @@ public class FirstPersonAudio : MonoBehaviour
         if (crouch)
         {
             crouchStartAudio = GetOrCreateAudioSource("Crouch Start Audio");
-            crouchStartAudio = GetOrCreateAudioSource("Crouched Audio");
-            crouchStartAudio = GetOrCreateAudioSource("Crouch End Audio");
+            crouchedAudio = GetOrCreateAudioSource("Crouched Audio");
+            crouchEndAudio = GetOrCreateAudioSource("Crouch End Audio");
         }
     }
 
@@ -115,33 +115,37 @@ public class FirstPersonAudio : MonoBehaviour
         //}
 
         // Pause todos los audios de movimiento excepto el que queremos usar.
-    foreach (var audio in MovingAudios.Where(audio => audio != audioToPlay && audio != null))
-    {
-        audio.Pause();
-    }
-
-    if (audioToPlay == stepAudio && groundCheck.isGrounded)
-    {
-        string surface = DetectSurfaceTag();
-        AudioClip[] selectedClips = null;
-
-        switch (surface)
+        foreach (var audio in MovingAudios.Where(audio => audio != audioToPlay && audio != null))
         {
-            case "Grass": selectedClips = grassSteps; break;
-            case "Ground": selectedClips = groundSteps; break;
-            case "Wood": selectedClips = woodSteps; break;
+            audio.Pause();
         }
 
-        if (selectedClips != null && selectedClips.Length > 0)
+        if (audioToPlay == stepAudio && groundCheck.isGrounded)
         {
-            stepAudio.clip = selectedClips[Random.Range(0, selectedClips.Length)];
-        }
-    }
+            string surface = DetectSurfaceTag();
+            AudioClip[] selectedClips = surface switch
+            {
+                "Grass" => grassSteps,
+                "Ground" => groundSteps,
+                "Wood" => woodSteps,
+                _ => null
+            };
 
-    if (audioToPlay && !audioToPlay.isPlaying)
-    {
-        audioToPlay.Play();
-    }
+            if (selectedClips != null && selectedClips.Length > 0)
+            {
+                stepAudio.clip = selectedClips[Random.Range(0, selectedClips.Length)];
+            }
+            else if (stepAudio.clip == null)
+            {
+                // Usa un clip por defecto si no se detectó superficie o está vacío
+                stepAudio.clip = grassSteps.Length > 0 ? grassSteps[0] : null;
+            }
+        }
+
+        if (audioToPlay && !audioToPlay.isPlaying)
+        {
+            audioToPlay.Play();
+        }
     }
 
     private string DetectSurfaceTag()
