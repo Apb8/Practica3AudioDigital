@@ -8,8 +8,11 @@ public class CustomFootsteps : MonoBehaviour
     public AudioClip woodStep;
 
     public float minMoveSpeed = 0.1f;
+    public float surfaceChangeCooldown = 0.5f;
+
     private string currentSurface = "";
     private Rigidbody rb;
+    private float lastSurfaceChangeTime = -Mathf.Infinity;
 
     void Start()
     {
@@ -38,13 +41,20 @@ public class CustomFootsteps : MonoBehaviour
     void UpdateSurfaceAndAudio()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 2f))
+
+        // cambio raycast q sino no va bn
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
+
+        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, 2f))
         {
             string tag = hit.collider.tag;
 
-            if (tag != currentSurface)
+            // evitar cambios frecuentes
+            if (tag != currentSurface && Time.time - lastSurfaceChangeTime > surfaceChangeCooldown)
             {
+                lastSurfaceChangeTime = Time.time;
                 currentSurface = tag;
+
                 switch (tag)
                 {
                     case "grass":
@@ -75,6 +85,6 @@ public class CustomFootsteps : MonoBehaviour
 
     bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        return Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, 1.1f);
     }
 }

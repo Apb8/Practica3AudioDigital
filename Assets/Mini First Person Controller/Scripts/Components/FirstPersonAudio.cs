@@ -114,7 +114,7 @@ public class FirstPersonAudio : MonoBehaviour
         //    audioToPlay.Play();
         //}
 
-        // Pause todos los audios de movimiento excepto el que queremos usar.
+        // Pause todos los audios de movimiento excepto el que quiero usar
         foreach (var audio in MovingAudios.Where(audio => audio != audioToPlay && audio != null))
         {
             audio.Pause();
@@ -137,7 +137,7 @@ public class FirstPersonAudio : MonoBehaviour
             }
             else if (stepAudio.clip == null)
             {
-                // Usa un clip por defecto si no se detectó superficie o está vacío
+                // clip x defcto
                 stepAudio.clip = grassSteps.Length > 0 ? grassSteps[0] : null;
             }
         }
